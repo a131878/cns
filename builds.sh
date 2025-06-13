@@ -13,6 +13,7 @@ option() {
 	read daemon_run
 }
 
+
 cns_set() {
 	echo -n '请输入cns服务端口(如果不用请留空): '
 	read cns_port
@@ -33,6 +34,7 @@ cns_set() {
 	export cns_port cns_encrypt_password cns_udp_flag cns_proxy_key cns_tls_port cns_install_dir cns_UPX
 }
 
+
 amy4Server_set() {
 	echo -n "请输入内部账号（如果没有请忽略）: "
 	read amy4Server_auth_secret
@@ -49,12 +51,14 @@ amy4Server_set() {
 	[ -z "$amy4Server_install_dir" ] && amy4Server_install_dir=/usr/local/amy4Server
 	echo -n "安装UPX压缩版本?[n]: "
 	read amy4Server_UPX
+	#echo -n "是否使用HTTP代理拉取amy4Server配置(1.百度 2.联通UC):"
+	#read amy4Server_proxy_opt
 	echo "$amy4Server_install_dir"|grep -q '^/' || amy4Server_install_dir="$PWD/$amy4Server_install_dir"
 	export amy4Server_auth_secret amy4Server_secret_password amy4Server_port amy4Server_clientkey ipv6_support amy4Server_install_dir amy4Server_UPX
 }
 
 cns_task() {
-	if $download_tool_cmd cns.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/amy/amy4Server.sh; then
+	if $download_tool_cmd cns.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/cns/cns.sh; then
 		chmod 777 cns.sh
 		sed -i "s~#\!/bin/bash~#\!$SHELL~" cns.sh
 		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./cns.sh $task_type && \
@@ -65,6 +69,7 @@ cns_task() {
 	fi
 	rm -f cns.sh
 }
+
 
 amy4Server_task() {
 	if $download_tool_cmd amy4Server.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/amy/amy4Server.sh; then
@@ -79,12 +84,14 @@ amy4Server_task() {
 	rm -f amy4Server.sh
 }
 
+
 cns_uninstall_set() {
 	echo -n '请输入cns安装目录(默认/usr/local/cns): '
 	read cns_install_dir
 	[ -z "$cns_install_dir" ] && cns_install_dir='/usr/local/cns'
 	export cns_install_dir
 }
+
 
 amy4Server_uninstall_set() {
 	echo -n "请输入amy4Server安装目录(默认/usr/local/amy4Server): "
