@@ -96,8 +96,8 @@ amy4Server_uninstall_set() {
 server_install_set() {
 	for opt in $*; do
 		case $opt in
-			2) cns_set;;
-			4) amy4Server_set;;
+			1) cns_set;;
+			2) amy4Server_set;;
 			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
 		esac
 	done
@@ -106,8 +106,8 @@ server_install_set() {
 server_uninstall_set() {
 	for opt in $*; do
 		case $opt in
-			2) cns_uninstall_set;;
-			4) amy4Server_uninstall_set;;
+			1) cns_uninstall_set;;
+			2) amy4Server_uninstall_set;;
 			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
 		esac
 	done
@@ -116,8 +116,8 @@ server_uninstall_set() {
 start_task() {
 	for opt in $*; do
 		case $opt in
-			2) cns_task;;
-			4) amy4Server_task;;
+			1) cns_task;;
+			2) amy4Server_task;;
 		esac
 		sleep 1
 	done
