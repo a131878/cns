@@ -5,8 +5,8 @@ option() {
 	read install_opt
 	echo "$install_opt"|grep -q '2' && task_type='uninstall' || task_type='install'
 	echo -n $echo_opt_e "可选项目:
-	\r2. cns
-	\r4. amy4Server
+	\r1. cns
+	\r2. amy4Server
 	\r请选择项目(多个用空格隔开): "
 	read build_projects
 	echo -n '后台运行吗?(输出保存在builds.out文件)[n]: '
