@@ -1,0 +1,155 @@
+#!/bin/sh
+
+option() {
+	echo -n $echo_opt_e "1. 安装项目\n2. 卸载项目\n请输入选项(默认为1): "
+	read install_opt
+	echo "$install_opt"|grep -q '2' && task_type='uninstall' || task_type='install'
+	echo -n $echo_opt_e "可选项目:
+	\r2. cns
+	\r4. amy4Server
+	\r请选择项目(多个用空格隔开): "
+	read build_projects
+	echo -n '后台运行吗?(输出保存在builds.out文件)[n]: '
+	read daemon_run
+}
+
+cns_set() {
+	echo -n '请输入cns服务端口(如果不用请留空): '
+	read cns_port
+	echo -n '请输入cns加密密码(默认不加密): '
+	read cns_encrypt_password
+	echo -n "请输入cns的udp标识(默认: 'httpUDP'): "
+	read cns_udp_flag
+	echo -n "请输入cns代理头域(默认: 'Meng'): "
+	read cns_proxy_key
+	echo -n '请输入tls服务端口(如果不用请留空): '
+	read cns_tls_port
+	echo -n '请输入cns安装目录(默认/usr/local/cns): '
+	read cns_install_dir
+	echo -n "安装UPX压缩版本?[n]: "
+	read cns_UPX
+	echo "$cns_UPX"|grep -qi '^y' && cns_UPX="upx" || cns_UPX=""
+	[ -z "$cns_install_dir" ] && cns_install_dir='/usr/local/cns'
+	export cns_port cns_encrypt_password cns_udp_flag cns_proxy_key cns_tls_port cns_install_dir cns_UPX
+}
+
+amy4Server_set() {
+	echo -n "请输入内部账号（如果没有请忽略）: "
+	read amy4Server_auth_secret
+	echo -n "请输入内部密码（如果没有请忽略）: "
+	read amy4Server_secret_password
+	echo -n "请输入amy4Server服务端口: "
+	read amy4Server_port
+	echo -n "请输入amy4Server连接密码(ClientKey): "
+	read amy4Server_clientkey
+	echo -n "服务器是否支持IPV6[n]: "
+	read ipv6_support
+	echo -n "请输入安装目录(默认/usr/local/amy4Server): "  #安装目录
+	read amy4Server_install_dir
+	[ -z "$amy4Server_install_dir" ] && amy4Server_install_dir=/usr/local/amy4Server
+	echo -n "安装UPX压缩版本?[n]: "
+	read amy4Server_UPX
+	echo "$amy4Server_install_dir"|grep -q '^/' || amy4Server_install_dir="$PWD/$amy4Server_install_dir"
+	export amy4Server_auth_secret amy4Server_secret_password amy4Server_port amy4Server_clientkey ipv6_support amy4Server_install_dir amy4Server_UPX
+}
+
+cns_task() {
+	if $download_tool_cmd cns.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/amy/amy4Server.sh; then
+		chmod 777 cns.sh
+		sed -i "s~#\!/bin/bash~#\!$SHELL~" cns.sh
+		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./cns.sh $task_type && \
+				echo 'cns任务成功' >>builds.log || \
+				echo 'cns启动失败' >>builds.log
+	else
+		echo 'cns脚本下载失败' >>builds.log
+	fi
+	rm -f cns.sh
+}
+
+amy4Server_task() {
+	if $download_tool_cmd amy4Server.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/amy/amy4Server.sh; then
+		chmod 777 amy4Server.sh
+		sed -i "s~#\!/bin/bash~#\!$SHELL~" amy4Server.sh
+		echo $echo_opt_e "n"|./amy4Server.sh $task_type && \
+			echo 'amy4Server任务成功' >>builds.log || \
+			echo 'amy4Server任务失败' >>builds.log
+	else
+		echo 'amy4Server脚本下载失败' >>builds.log
+	fi
+	rm -f amy4Server.sh
+}
+
+cns_uninstall_set() {
+	echo -n '请输入cns安装目录(默认/usr/local/cns): '
+	read cns_install_dir
+	[ -z "$cns_install_dir" ] && cns_install_dir='/usr/local/cns'
+	export cns_install_dir
+}
+
+amy4Server_uninstall_set() {
+	echo -n "请输入amy4Server安装目录(默认/usr/local/amy4Server): "
+	read amy4Server_install_dir
+	[ -z "$amy4Server_install_dir" ] && amy4Server_install_dir='/usr/local/amy4Server'
+	export amy4Server_install_dir
+}
+
+server_install_set() {
+	for opt in $*; do
+		case $opt in
+			2) cns_set;;
+			4) amy4Server_set;;
+			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
+		esac
+	done
+}
+
+server_uninstall_set() {
+	for opt in $*; do
+		case $opt in
+			2) cns_uninstall_set;;
+			4) amy4Server_uninstall_set;;
+			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
+		esac
+	done
+}
+
+start_task() {
+	for opt in $*; do
+		case $opt in
+			2) cns_task;;
+			4) amy4Server_task;;
+		esac
+		sleep 1
+	done
+	echo '所有任务完成' >>builds.log
+	echo $echo_opt_e "\033[32m`cat builds.log 2>&-`\033[0m"
+}
+
+run_tasks() {
+	[ "$task_type" != 'uninstall' ] && server_install_set $build_projects || server_uninstall_set $build_projects
+	if echo "$daemon_run"|grep -qi 'y'; then
+		(`start_task $build_projects &>builds.out` &)
+		echo "正在后台运行中......"
+	else
+		start_task $build_projects
+		rm -f builds.log
+	fi
+}
+
+script_init() {
+	emulate bash 2>/dev/null #zsh仿真模式
+	echo -e '' | grep -q 'e' && echo_opt_e='' || echo_opt_e='-e' #dash的echo没有-e选项
+	PM=`which apt-get || which yum`
+	type curl || type wget || $PM -y install curl wget
+	type curl && download_tool_cmd='curl -sko' || download_tool_cmd='wget --no-check-certificate -qO'
+	rm -f builds.log builds.out
+	clear
+}
+
+main() {
+	script_init
+	option
+	run_tasks
+}
+
+main
