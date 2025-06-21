@@ -7,6 +7,7 @@ option() {
 	echo -n $echo_opt_e "可选项目:
 	\r1. cns
 	\r2. amy4Server
+	\r3. xray
 	\r请选择项目(多个用空格隔开): "
 	read build_projects
 	echo -n '后台运行吗?(输出保存在builds.out文件)[n]: '
@@ -57,6 +58,82 @@ amy4Server_set() {
 	export amy4Server_auth_secret amy4Server_secret_password amy4Server_port amy4Server_clientkey ipv6_support amy4Server_install_dir amy4Server_UPX
 }
 
+
+xray_set() {
+		echo -n "请输入xray安装目录(默认: /usr/local/xray): "
+		read xray_install_directory
+		echo $echo_opt_e "选项(TLS默认为自签名证书, 如有需要请自行更改):
+		\r1. tcp http                   (vmess)
+		\r2. tcp tls                    (vmess)
+		\r3. tcp reality                (vless)
+		\r4. websocket                  (vmess)
+		\r5. websocket tls              (vmess)
+		\r6. websocket tls              (vless)
+		\r7. mkcp                       (vmess)
+		\r8. mkcp tls                   (vmess)
+		\r9. mkcp tls                   (vless)
+		\r10. trojan tls
+		\r请输入你的选项(多个选项用空格分隔):"
+		read xray_inbounds_options
+		for opt in $xray_inbounds_options; do
+			case $opt in
+				1)
+					echo -n "请输入vmess tcp http服务端口: "
+					read vmess_tcp_http_port
+				;;
+				2)
+					echo -n "请输入vmess tcp tls服务端口: "
+					read vmess_tcp_tls_port
+				;;
+				3)
+					echo -n "请输入vless tcp reality服务端口: "
+					read vless_tcp_reality_port
+				;;
+				4)
+					echo -n "请输入vmess websocket服务端口: "
+					read vmess_ws_port
+					echo -n "请输入vmess websocket路径(默认: '/'): "
+					read vmess_ws_path
+					vmess_ws_path=${vmess_ws_path:-/}
+				;;
+				5)
+					echo -n "请输入vmess websocket tls服务端口: "
+					read vmess_ws_tls_port
+					echo -n "请输入vmess websocket tls路径(默认: '/'): "
+					read vmess_ws_tls_path
+					vmess_ws_tls_path=${vmess_ws_tls_path:-/}
+				;;
+				6)
+					echo -n "请输入vless websocket tls服务端口: "
+					read vless_ws_tls_port
+					echo -n "请输入vless websocket tls路径(默认: '/'): "
+					read vless_ws_tls_path
+					vless_ws_tls_path=${vless_ws_tls_path:-/}
+				;;
+				7)
+					echo -n "请输入vmess mKCP服务端口: "
+					read vmess_mkcp_port
+				;;
+				8)
+					echo -n "请输入vmess mKCP tls服务端口: "
+					read vmess_mkcp_tls_port
+				;;
+				9)
+					echo -n "请输入vless mKCP tls服务端口: "
+					read vless_mkcp_tls_port
+				;;
+				10)
+					echo -n "请输入trojan tls服务端口: "
+					read trojan_tls_port
+				;;
+			esac
+		done
+	#	echo -n "安装UPX压缩版本?[n]: "
+	#	read xray_UPX
+		[ -z "$xray_install_directory" ] && xray_install_directory='/usr/local/xray'
+		export xray_install_directory xray_inbounds_options vmess_tcp_http_port vmess_tcp_tls_port vless_tcp_reality_port vmess_ws_port vmess_ws_path vmess_ws_tls_port vmess_ws_tls_path vless_ws_tls_port vless_ws_tls_path vmess_mkcp_port vmess_mkcp_tls_port vless_mkcp_tls_port trojan_tls_port
+}
+
 cns_task() {
 	if $download_tool_cmd cns.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/cns/cns.sh; then
 		chmod 777 cns.sh
@@ -85,6 +162,19 @@ amy4Server_task() {
 }
 
 
+xray_task() {
+	if $download_tool_cmd xray.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.sh; then
+		chmod 777 xray.sh
+		sed -i "s~#\!/bin/bash~#\!$SHELL~" xray.sh
+		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./xray.sh $task_type && \
+			echo 'xray任务成功' >>builds.log || \
+			echo 'xray任务失败' >>builds.log
+	else
+		echo 'xray脚本下载失败' >>builds.log
+	fi
+	rm -f xray.sh
+}
+
 cns_uninstall_set() {
 	echo -n '请输入cns安装目录(默认/usr/local/cns): '
 	read cns_install_dir
@@ -100,11 +190,20 @@ amy4Server_uninstall_set() {
 	export amy4Server_install_dir
 }
 
+xray_uninstall_set() {
+	echo -n "请输入xray安装目录(默认/usr/local/xray): "
+	read xray_install_directory
+	[ -z "$xray_install_directory" ] && xray_install_directory='/usr/local/xray'
+	export xray_install_directory
+}
+
+
 server_install_set() {
 	for opt in $*; do
 		case $opt in
 			1) cns_set;;
 			2) amy4Server_set;;
+			3) xray_set;;
 			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
 		esac
 	done
@@ -115,6 +214,7 @@ server_uninstall_set() {
 		case $opt in
 			1) cns_uninstall_set;;
 			2) amy4Server_uninstall_set;;
+			3) xray_uninstall_set;;
 			*) exec echo "选项($opt)不正确，请输入正确的选项！";;
 		esac
 	done
@@ -125,6 +225,7 @@ start_task() {
 		case $opt in
 			1) cns_task;;
 			2) amy4Server_task;;
+		    3) xray_task;;
 		esac
 		sleep 1
 	done
