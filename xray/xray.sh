@@ -231,10 +231,7 @@ Config() {
 				;;
 			esac
 		done
-		#echo -n "Install UPX compress version?[n]: "
-		#read xray_UPX
 	fi
-	echo "$xray_UPX"|grep -qi '^y' && xray_UPX="upx" || xray_UPX=""
 }
 
 GetAbi() {
@@ -278,7 +275,7 @@ InstallFile() {
 	ln -s "$xray_install_directory/xray.init" /etc/init.d/xray
 	chmod -R +rwx "$xray_install_directory" /etc/init.d/xray
 	if which systemctl &>/dev/null && [ -z "$(systemctl --failed|grep -q 'Host is down')" ]; then
-		$download_tool_cmd /lib/systemd/system/xray.service https://github.com/CoverUp137/cns/blob/main/xray/xray.service || Error "xray.service download failed."
+		$download_tool_cmd /lib/systemd/system/xray.service https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.service || Error "xray.service download failed."
 		chmod +rwx /lib/systemd/system/xray.service
 		sed -i "s~\[xray_install_directory\]~$xray_install_directory~g" /lib/systemd/system/xray.service
 		systemctl daemon-reload
