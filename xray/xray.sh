@@ -231,7 +231,10 @@ Config() {
 				;;
 			esac
 		done
+		echo -n "Install UPX compress version?[n]: "
+		read xray_UPX
 	fi
+	echo "$xray_UPX"|grep -qi '^y' && xray_UPX="upx" || xray_UPX=""
 }
 
 GetAbi() {
@@ -264,8 +267,8 @@ InstallFile() {
 	mkdir -p "${xray_install_directory:=/usr/local/xray}" || Error "Create xray install directory failed."
 	cd "$xray_install_directory" || Error "Create cns install directory failed."
 	#install xray
-	github_repo="https://github.com/CoverUp137/cns/releases/download/xray"
-    $download_tool_cmd xray "$github_repo/xray-linux-${machine}" || Error "xray download failed."
+    #github_repo="https://github.com/CoverUp137/cns/releases/download/xray"
+    $download_tool_cmd xray "https://github.com/CoverUp137/cns/releases/download/xray/xray-linux-${machine}" || Error "xray download failed."
 	$download_tool_cmd xray.init https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.init || Error "xray.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" xray.init
