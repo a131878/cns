@@ -28,11 +28,11 @@ cns_set() {
 	read cns_tls_port
 	echo -n '请输入cns安装目录(默认/usr/local/cns): '
 	read cns_install_dir
-	echo -n "安装UPX压缩版本?[n]: "
-	read cns_UPX
-	echo "$cns_UPX"|grep -qi '^y' && cns_UPX="upx" || cns_UPX=""
+	#echo -n "安装UPX压缩版本?[n]: "
+	#read cns_UPX
+	#echo "$cns_UPX"|grep -qi '^y' && cns_UPX="upx" || cns_UPX=""
 	[ -z "$cns_install_dir" ] && cns_install_dir='/usr/local/cns'
-	export cns_port cns_encrypt_password cns_udp_flag cns_proxy_key cns_tls_port cns_install_dir cns_UPX
+	export cns_port cns_encrypt_password cns_udp_flag cns_proxy_key cns_tls_port cns_install_dir
 }
 
 
@@ -50,12 +50,12 @@ amy4Server_set() {
 	echo -n "请输入安装目录(默认/usr/local/amy4Server): "  #安装目录
 	read amy4Server_install_dir
 	[ -z "$amy4Server_install_dir" ] && amy4Server_install_dir=/usr/local/amy4Server
-	echo -n "安装UPX压缩版本?[n]: "
-	read amy4Server_UPX
-	#echo -n "是否使用HTTP代理拉取amy4Server配置(1.百度 2.联通UC):"
-	#read amy4Server_proxy_opt
+	#echo -n "安装UPX压缩版本?[n]: "
+	#read amy4Server_UPX
+	echo -n "是否使用HTTP代理拉取amy4Server配置(1.百度 2.联通UC):"
+	read amy4Server_proxy_opt
 	echo "$amy4Server_install_dir"|grep -q '^/' || amy4Server_install_dir="$PWD/$amy4Server_install_dir"
-	export amy4Server_auth_secret amy4Server_secret_password amy4Server_port amy4Server_clientkey ipv6_support amy4Server_install_dir amy4Server_UPX
+	export amy4Server_auth_secret amy4Server_secret_password amy4Server_port amy4Server_clientkey ipv6_support amy4Server_install_dir
 }
 
 
