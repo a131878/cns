@@ -163,7 +163,7 @@ amy4Server_task() {
 
 
 xray_task() {
-	if $download_tool_cmd xray.sh https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.sh; then
+	if $download_tool_cmd xray.sh https://github.010507.xyz/https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.sh; then
 		chmod 777 xray.sh
 		sed -i "s~#\!/bin/bash~#\!$SHELL~" xray.sh
 		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./xray.sh $task_type && \
