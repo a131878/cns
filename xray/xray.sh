@@ -234,7 +234,7 @@ Config() {
 		#echo -n "Install UPX compress version?[n]: "
 		#read xray_UPX
 	fi
-	#echo "$xray_UPX"|grep -qi '^y' && xray_UPX="upx" || xray_UPX=""
+	echo "$xray_UPX"|grep -qi '^y' && xray_UPX="upx" || xray_UPX=""
 }
 
 GetAbi() {
