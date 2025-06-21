@@ -268,7 +268,7 @@ InstallFile() {
 	cd "$xray_install_directory" || Error "Create cns install directory failed."
 	#install xray
 	github_repo="https://github.com/CoverUp137/cns/releases/download/xray"
-    $download_tool_cmd cns "$github_repo/xray-linux-${machine}${softfloat}" || Error "xray download failed."
+    $download_tool_cmd xray "$github_repo/xray-linux-${machine}${softfloat}" || Error "xray download failed."
 	$download_tool_cmd xray.init https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/xray/xray.init || Error "xray.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" xray.init
