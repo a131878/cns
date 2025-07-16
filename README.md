@@ -1,4 +1,4 @@
 ```
-wget -O builds.sh https://gh.0507.dpdns.org/https://raw.githubusercontent.com/CoverUp137/cns/refs/heads/main/builds.sh && sh builds.sh
+wget -O builds.sh https://gh.0507.dpdns.org/https://github.com/a131878/cns/blob/main/builds.sh && sh builds.sh
 
 ```
