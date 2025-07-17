@@ -135,7 +135,7 @@ xray_set() {
 }
 
 cns_task() {
-	if $download_tool_cmd cns.sh https://github.com/a131878/cns/blob/main/builds.sh/CoverUp137/cns/refs/heads/main/cns/cns.sh; then
+	if $download_tool_cmd cns.sh https://github.com/a131878/cns/blob/main/cns/cns.sh; then
 		chmod 777 cns.sh
 		sed -i "s~#\!/bin/bash~#\!$SHELL~" cns.sh
 		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./cns.sh $task_type && \
@@ -163,7 +163,7 @@ amy4Server_task() {
 
 
 xray_task() {
-	if $download_tool_cmd xray.sh https://github.com/a131878/cns/blob/main/builds.sh/CoverUp137/cns/refs/heads/main/xray/xray.sh; then
+	if $download_tool_cmd xray.sh https://github.com/a131878/cns/blob/main/xray/xray.sh; then
 		chmod 777 xray.sh
 		sed -i "s~#\!/bin/bash~#\!$SHELL~" xray.sh
 		echo $echo_opt_e "n\ny\ny\ny\ny\n"|./xray.sh $task_type && \
