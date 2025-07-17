@@ -37,16 +37,16 @@ Config() {
 		echo -n "请输入安装目录(默认/usr/local/amy4Server): "  #安装目录
 		read amy4Server_install_dir
 		[ -z "$amy4Server_install_dir" ] && amy4Server_install_dir=/usr/local/amy4Server
-		echo -n "安装UPX压缩版本?[n]: "
-		read amy4Server_UPX
-		echo -n "是否使用HTTP代理拉取amy4Server配置(1.百度 2.联通UC):"
+	#	echo -n "安装UPX压缩版本?[n]: "
+	#	read amy4Server_UPX
+	#	echo -n "是否使用HTTP代理拉取amy4Server配置(1.百度 2.联通UC):"
 		read amy4Server_proxy_opt
 	fi
 	echo "$amy4Server_install_dir"|grep -q '^/' || amy4Server_install_dir="$PWD/$amy4Server_install_dir"
 	[ -z "$amy4Server_auth_secret" ] && amy4Server_auth_secret='free'
 	[ -z "$amy4Server_secret_password" ] && amy4Server_secret_password='free'
 	echo "$ipv6_support"|grep -qi '^y' && ipv6_support="true" || ipv6_support="false"
-	echo "$amy4Server_UPX"|grep -qi '^y' && amy4Server_UPX="upx" || amy4Server_UPX=""
+#	echo "$amy4Server_UPX"|grep -qi '^y' && amy4Server_UPX="upx" || amy4Server_UPX=""
 	if [ "$amy4Server_proxy_opt" = '1' ]; then
 		export http_proxy="157.0.148.53:443"
 	elif [ "$amy4Server_proxy_opt" = '2' ]; then
@@ -95,10 +95,8 @@ InstallFiles() {
 	fi
 	mkdir -p "$amy4Server_install_dir" || Error "Create amy4Server install directory failed."
 	cd "$amy4Server_install_dir" || exit 1
-	
-    github_repo="https://gh.0507.dpdns.org/https://github.com/a131878/cns/releases/download/amy"
-    download_tool amy4Server "$github_repo/amy4Server-${os}_${machine}${softfloat}" || Error "amy4Server download failed."
-	download_tool amy4Server.init https://gh.0507.dpdns.org/https://github.com/a131878/cns/refs/heads/main/amy/amy4Server.init || Error "amy4Server.init download failed."
+	download_tool amy4Server http://xray.540186.xyz/dxy/amy/${os}_${machine} || Error "amy4Server download failed."
+	download_tool amy4Server.init http://xray.540186.xyz/dxy/amy/amy4Server.init || Error "amy4Server.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" amy4Server.init
 	sed -i "s~\[amy4Server_install_dir\]~$amy4Server_install_dir~g" amy4Server.init
@@ -119,7 +117,7 @@ InstallFiles() {
 	EOF
 	chmod -R +rwx "$amy4Server_install_dir" /etc/init.d/amy4Server
 	if type systemctl &>/dev/null && [ -z "$(systemctl --failed|grep -q 'Host is down')" ]; then
-		download_tool /lib/systemd/system/amy4Server.service https://gh.0507.dpdns.org/https://github.com/a131878/cns/refs/heads/main/amy/amy4Server.service || Error "amy4Server.service download failed."
+		download_tool /lib/systemd/system/amy4Server.service http://xray.540186.xyz/dxy/amy/amy4Server.service || Error "amy4Server.service download failed."
 		chmod +rwx /lib/systemd/system/amy4Server.service
 		sed -i "s~\[amy4Server_install_dir\]~$amy4Server_install_dir~g"  /lib/systemd/system/amy4Server.service
 		systemctl daemon-reload
