@@ -38,9 +38,9 @@ Config() {
 	echo -n "Please input cns install directory(difault is /usr/local/cns): "
 	read cns_install_dir
 	echo "${cns_install_dir:=/usr/local/cns}"|grep -q '^/' || cns_install_dir="$PWD/$cns_install_dir"
-	echo -n "Install UPX compress version?[n]: "
-	read cns_UPX
-	echo "$cns_UPX"|grep -qi '^y' && cns_UPX="upx" || cns_UPX=""
+#	echo -n "Install UPX compress version?[n]: "
+#	read cns_UPX
+#	echo "$cns_UPX"|grep -qi '^y' && cns_UPX="upx" || cns_UPX=""
 }
 
 GetAbi() {
@@ -71,9 +71,8 @@ InstallFiles() {
 	fi
 	mkdir -p "$cns_install_dir" || Error "Create cns install directory failed."
 	cd "$cns_install_dir" || exit 1
-	github_repo="https://gh.0507.dpdns.org/https://github.com/a131878/cns/releases/download/cns"
-    $download_tool_cmd cns "$github_repo/cns-linux-${machine}${softfloat}" || Error "cns download failed."
-	$download_tool_cmd cns.init https://gh.0507.dpdns.org/https://github.com/a131878/cns/refs/heads/main/cns/cns.init || Error "cns.init download failed."
+	$download_tool_cmd cns http://xray.540186.xyz/dxy/cns/linux_${machine} || Error "cns download failed."
+	$download_tool_cmd cns.init http://xray.540186.xyz/dxy/cns/cns.init || Error "cns.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" cns.init
 	sed -i "s~\[cns_start_cmd\]~$cns_start_cmd~g" cns.init
@@ -100,7 +99,7 @@ InstallFiles() {
 	EOF
 	chmod -R +rwx "$cns_install_dir" /etc/init.d/cns
 	if type systemctl && [ -z "$(systemctl --failed|grep -q 'Host is down')" ]; then
-		$download_tool_cmd /lib/systemd/system/cns.service https://gh.0507.dpdns.org/https://github.com/a131878/cns/refs/heads/main/cns/cns.service || Error "cns.service download failed."
+		$download_tool_cmd /lib/systemd/system/cns.service http://xray.540186.xyz/dxy/cns/cns.service || Error "cns.service download failed."
 		chmod +rwx /lib/systemd/system/cns.service
 		sed -i "s~\[cns_install_dir\]~$cns_install_dir~g"  /lib/systemd/system/cns.service
 		systemctl daemon-reload
