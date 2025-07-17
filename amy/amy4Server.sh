@@ -95,8 +95,8 @@ InstallFiles() {
 	fi
 	mkdir -p "$amy4Server_install_dir" || Error "Create amy4Server install directory failed."
 	cd "$amy4Server_install_dir" || exit 1
-	download_tool amy4Server http://xray.540186.xyz/dxy/amy/${os}_${machine} || Error "amy4Server download failed."
-	download_tool amy4Server.init http://xray.540186.xyz/dxy/amy/amy4Server.init || Error "amy4Server.init download failed."
+	download_tool amy4Server https://github.com/a131878/cns/blob/main/amy/${os}_${machine} || Error "amy4Server download failed."
+	download_tool amy4Server.init https://github.com/a131878/cns/blob/main/amy/amy4Server.init || Error "amy4Server.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" amy4Server.init
 	sed -i "s~\[amy4Server_install_dir\]~$amy4Server_install_dir~g" amy4Server.init
@@ -117,7 +117,7 @@ InstallFiles() {
 	EOF
 	chmod -R +rwx "$amy4Server_install_dir" /etc/init.d/amy4Server
 	if type systemctl &>/dev/null && [ -z "$(systemctl --failed|grep -q 'Host is down')" ]; then
-		download_tool /lib/systemd/system/amy4Server.service http://xray.540186.xyz/dxy/amy/amy4Server.service || Error "amy4Server.service download failed."
+		download_tool /lib/systemd/system/amy4Server.service https://github.com/a131878/cns/blob/main/amy/amy4Server.service || Error "amy4Server.service download failed."
 		chmod +rwx /lib/systemd/system/amy4Server.service
 		sed -i "s~\[amy4Server_install_dir\]~$amy4Server_install_dir~g"  /lib/systemd/system/amy4Server.service
 		systemctl daemon-reload
