@@ -267,7 +267,7 @@ InstallFile() {
 	mkdir -p "${xray_install_directory:=/usr/local/xray}" || Error "Create xray install directory failed."
 	cd "$xray_install_directory" || Error "Create cns install directory failed."
 	#install xray
-	$download_tool_cmd xray http://xray.540186.xyz/dxy/xray/${xray_UPX}/linux_${machine}${softfloat} || Error "xray download failed."
+	$download_tool_cmd xray https://github.com/a131878/cns/releases/tag/xray/${xray_UPX}/linux_${machine}${softfloat} || Error "xray download failed."
 	$download_tool_cmd xray.init http://xray.540186.xyz/dxy/xray/xray.init || Error "xray.init download failed."
 	[ -f '/etc/rc.common' ] && rcCommon='/etc/rc.common'
 	sed -i "s~#!/bin/sh~#!$SHELL $rcCommon~" xray.init
